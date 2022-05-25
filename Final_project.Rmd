@@ -1,0 +1,82 @@
+---
+title: "RR_ Final Project"
+author: "Sang Luong"
+date: "5/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reshape)
+library("readxl")
+library(dplyr)
+library("MASS")
+library("sandwich")
+library("zoo")
+library("car")
+library("lmtest")
+library("Formula")
+library("plm")
+library("stargazer")
+library("aod")
+options(scipen=999)
+setwd("C:/Users/Admin/Desktop/RR_FINAL-PROJECT/Data_set")
+```
+
+## 1. Introduction
+- The project aims to reproduce Econometric Analyst in Advanced econometrics course in which I will investigate the nexus between Corruption  and foreign direct investment (FDI) in the context of a  panel data of Middle East and North Africa (MENA) countries in period 2003-2009.
+- The econometrics model is inspired by paper (Heba E. Helmy (2013) The impact of corruption on FDI: is MENA an exception? International Review of Applied Economics, 27:4, 491-514, DOI: 10.1080/02692171.2012.752445)
+- In general, there are two school of thoughts on Corruption-FDI relationship: "Grease” versus “sand” theorires
+
+|            | Grease the wheel                                                                                         | Sand the wheel                                                                      |
+| ---------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Definition | Corruption allows economic agents to overcome the inefficiencies created by ill-functioning institutions | Corruption affects the performance of MNCs and is a disincentivizing factor for FDI |
+| References | Lui (1985), Tullock (1996), Egger and Winner (2005).                                                     | Mauro (1995), Mo (2001), Chang and Hao (2017)                                       |                     |
+
+- For the project: **Reproduction** (2003-2009) -> **Replication** (extending the years 2003-2012) -> **Compare results**
+
+## 2. Data Processing
+
+###2.1 Data description
+
+| Variable                     | Abb     | Definition                                                                                | Source                               |
+| ---------------------------- | ------- | ----------------------------------------------------------------------------------------- | ------------------------------------ |
+| Foreign direct investment    | FDI     | Net FDI inflows into country                                                              | World Bank                           |
+| Corruption perception index  | CPI     | Measure the corruption in each country. Range from 0 (highly corrupt) - 10 (highly clean) | Transparency International           |
+| GDP per capita (current US$) | PCGDP   | Gross domestic product divided by midyear population                                      | World Bank                           |
+| Openess                      | OPEN    | The value of exports plus the value of imports divided by GDP                             | World Bank                           |
+| Fiscal Freedom               | FISCAL  | The tax burden imposed by government                                                      | Heritage’s Index of Economic Freedom |
+| Investment Freedom           | FREEINV | The magnitude of constraints imposed by a country on the flow of investment capital       | Heritage’s Index of Economic Freedom |
+
+### 2.2 Data Processing
+
+- Originally, there are 21 MENA countries: Algeria, Bahrain, Egypt, Iran, Israel, Jordan, Kuwait, Lebanon, Libya, Morocco, Oman, Qatar, Saudi Arabia, Syria, Tunisia, United Arab Emirates, Yemen, Djibouti, Iraq, Palestine, Turkey. However, Yemen, Djibouti, Iraq, Palestine, Turkey are excluded in data due to the missing value for many years.
+- According to Heba E. Helmy, the logarithm for investment flows and the GDP per capita is used.Since some of the observations for FDI are negative, we transform these variables using the following procedure: $y = ln(x + \sqrt{x^2+1})$ 
+- To avoid simultaneity, all explanatory variables are lagged one year in order with the dependent variable.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+MENA_DATA <- read.csv(file = 'MENA_DATA.csv')
+MENA_PLOT <- MENA_DATA %>% dplyr::group_by(Country) %>% dplyr:: summarise(CPI = mean(CPI), FDI = mean(FDI)) %>% arrange(CPI)
+MENA_PLOT$Label <- paste(MENA_PLOT$Country, paste0(round(MENA_PLOT$FDI/1000000,2), ' Millions US$'), sep = "\n")
+head(MENA_DATA,10)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+head(MENA_DATA,10)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+treemap(MENA_PLOT, 
+        index=c("Label"), 
+        vSize = "FDI",
+        vColor  = "CPI",  
+        type = "value",
+        palette = "RdYlGn", 
+        mapping = c(2.5,4.5,6.5),
+        title="FDI-Corr nexus", 
+        title.legend = "CPI",
+        fontsize.title = 14 )
+```
+
+## 3. Regression on Panel Data Model
+### 3.1 Implement process
