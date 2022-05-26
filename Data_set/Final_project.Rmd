@@ -1,7 +1,7 @@
 ---
-title: "RR_ Final Project"
+title: "Reproducible Research_ Final Project"
 author: "Sang Luong"
-date: "5/22/2022"
+date: "5/26/2022"
 output: 
   html_document:
     toc: true
@@ -312,13 +312,13 @@ $$ LNFDI =   \beta_{0i,t} +  \beta_1LNCPI_{i,t-1} +  \beta_2LNPCGDP_{i,t-1} +  \
     </tr>
 </table>
 
-**Note**: **i)** `***`Significant at 1% level, `**`Significant at 5% level, `*`Significant at 10% level. **ii)** Helmy (2013) use CPI, while in reproduction and replication model, LNCPI is used. **iii)** Fixed effect (1) is cross-section fixed effect, Fixed effect (2) is cross-section + period effect.
+**Note**: **i)** `***`Significant at 1% level, `**`Significant at 5% level, `*`Significant at 10% level. **ii)** Helmy (2013) use CPI, while in reproduction and replication model, LNCPI is used. **iii)** Fixed effect (1) is cross-section fixed effect, Fixed effect (2) is cross-section + period fixed effect.
 
 ### 3.3 Discussion
 
 * <B>In Reproduction model:</B> <br>
-  - Two variables (CPI and FREEINV) proved significant at the 5% significance level or lower. In additional, LNPCGDP is significant at 10% confident level while using cross-section + period effect model.
-  - Focusing on the main explanatory variable, the CPI shows again that a negative relationship exists between transparency and foreign direct investment, as a 1% increase in CPI (more transparency) decrease FDI inflows in MENA countries 13.5% when using Fixed effect (1) model, and 19.2% when using Fixed effect (2) model => **support "Grease the wheel" theory **.
+  - Two variables (CPI and FREEINV) proved significant at the 5% confident level or lower. In additional, LNPCGDP is significant at 10% confident level while using cross-section + period effect model.
+  - Focusing on the main explanatory variable, the CPI shows a negative relationship exists between transparency and foreign direct investment, as a 1% increase in CPI (more transparency) decrease FDI inflows in MENA countries 13.5% when using Fixed effect (1) model, and 19.2% when using Fixed effect (2) model => **support "Grease the wheel" theory **.
   - The results shows the impact of FREEINV, indicated that a 1-point increase in FREEINV decrease FDI flows by 14-18%.
   - Finally, in fixed effect (2) model, the GDP per capita as evident by the LNPCGDP indicator proved to have a significant and positive coefficient.
 * <B>In Replication model:</B> <br>
@@ -327,6 +327,8 @@ $$ LNFDI =   \beta_{0i,t} +  \beta_1LNCPI_{i,t-1} +  \beta_2LNPCGDP_{i,t-1} +  \
 
 ## 4. Conclusion
 
+- Corruption in MENA does not discourage investors. More than that, corruption is a means of economic expansion by overcoming bad and restrictive laws or behavior such that the value of economic expansion surpasses the extra costs of corruption, thereby supporting the efficient grease hypothesis (Helmy, 2003).
+- Period time of investigation is vital. It can change the results of the model.
 
 ## Appendix
 
@@ -404,4 +406,3 @@ phtest(fixed_0313, random_0313)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 plmtest(OLS_0313, type=c("bp"))
 ```
-
